@@ -6,7 +6,7 @@ interface Tag {
   id: string;
 }
 interface UseTagInput {
-  getInputProps: () => {
+  getInputProps: (events: {}) => {
     onKeyUp: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     onChange: (event: React.SyntheticEvent<HTMLInputElement>) => void;
   };
