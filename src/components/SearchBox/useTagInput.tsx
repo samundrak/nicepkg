@@ -6,26 +6,24 @@ interface Tag {
   id: string;
 }
 interface UseTagInput {
-  getInputProps: (events: {}) => {
+  getInputProps: () => {
     onKeyUp: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     onChange: (event: React.SyntheticEvent<HTMLInputElement>) => void;
   };
   onDelete: (tagId: string) => void;
   tags: Tag[];
+  addNewTag?: (id: string, value: string) => boolean;
 }
 
 interface IProps {
   delimiter?: string;
   shouldBreakOnEnter?: boolean;
+  onChange?: (event: SyntheticEvent<HTMLInputElement>) => void;
 }
-const SearchBox = ({ delimiter = ",", ...props }: IProps = {}) => {
+const SearchBox = ({ delimiter = ",", onChange, ...props }: IProps = {}) => {
   const [value, setValue] = React.useState("");
-  const [tags, setTags] = React.useState<Tag[]>([
-    {
-      id: "s",
-      value: "samundra",
-    },
-  ]);
+  const [tags, setTags] = React.useState<Tag[]>([]);
+
   const addValue = React.useCallback(
     (value: string, callback: (value: string) => boolean) => {
       const nextValue = value.trim();
@@ -52,10 +50,11 @@ const SearchBox = ({ delimiter = ",", ...props }: IProps = {}) => {
       if (
         !addValue(value, (text) => (text ? text.endsWith(delimiter) : false))
       ) {
+        onChange?.(event);
         setValue(nextValue);
       }
     },
-    [addValue, delimiter]
+    [addValue, delimiter, onChange]
   );
   const handleKeyup = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {

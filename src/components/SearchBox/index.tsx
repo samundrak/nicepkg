@@ -1,15 +1,33 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
+import useSWR from "swr";
 import { useDebounce } from "use-debounce";
 import useTagInput from "./useTagInput";
+import { NPM_SEARCH } from "../../consts/api";
+import { fetcher } from "../../utils";
 
 const SearchBox = () => {
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 200);
+  const { data } = useSWR(
+    debouncedSearchTerm ? `${NPM_SEARCH}${debouncedSearchTerm}&size=5` : null,
+    fetcher
+  );
+
+  const handleInputChange = React.useCallback(
+    (event: SyntheticEvent<HTMLInputElement>) => {
+      setSearchTerm(event.currentTarget.value);
+    },
+    []
+  );
   const tagInput = useTagInput({
     shouldBreakOnEnter: true,
+    onChange: handleInputChange,
   });
-
-  React.useMemo(() => {
-    console.log("ref changed", tagInput);
-  }, [tagInput]);
+  const handlePackageSelection = React.useCallback((item) => {
+    return () => {
+      console.log(item);
+    };
+  }, []);
   return (
     <React.Fragment>
       <div
@@ -40,16 +58,47 @@ const SearchBox = () => {
             </div>
           ))}
         </div>
-        <input
-          className="
+        <div className="w-5/12 h-16">
+          <input
+            className="
+            w-full
+            h-16
           text-2xl
           text-center
           font-thin
-          focus:outline-none focus:shadow-outline mt-2 h-16 rounded-full border-solid w-3/5 p-4"
-          placeholder="Enter package name..."
-          type="text"
-          {...tagInput.getInputProps()}
-        />
+          focus:outline-none focus:shadow-outline mt-2 rounded-full border-solid  p-4"
+            placeholder="Enter package name..."
+            type="text"
+            {...tagInput.getInputProps()}
+          />
+          <ul className="absolute rounded-md mt-1 w-5/12 bg-white shadow-xl">
+            {(data?.results || []).map(
+              (item: { package: Record<string, any> }) => (
+                <li
+                  className="text-md
+                 p-2 mt-1 text-center leading-loose
+                 hover:bg-gray-100
+                 cursor-pointer
+                 text-gray-700
+                 border-t-4
+                 border-gray-100
+                 "
+                  onClick={handlePackageSelection(item)}
+                >
+                  {item.package.name}
+                  <span className="text-gray-500 ml-2">
+                    @{item.package.version} &lt;
+                    {item.package.publisher.username}&gt;
+                  </span>
+                  <br />
+                  <span className="text-gray-500 ml-2 text-sm">
+                    {item.package.description}
+                  </span>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
       </div>
     </React.Fragment>
   );
