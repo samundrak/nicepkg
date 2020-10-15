@@ -25,14 +25,20 @@ const SearchBox = ({ delimiter = ",", onChange, ...props }: IProps = {}) => {
   const [tags, setTags] = React.useState<Tag[]>([]);
 
   const addValue = React.useCallback(
-    (value: string, callback: (value: string) => boolean) => {
-      const nextValue = value.trim();
+    (
+      value: {
+        value: string;
+        id?: string;
+      },
+      callback: (value: string) => boolean
+    ) => {
+      const nextValue = value.value.trim();
       if (callback(nextValue)) {
         setTags([
           ...tags,
           {
             value: nextValue.replace(delimiter, ""),
-            id: Date.now() + "",
+            id: value.id ?? Date.now() + "",
           },
         ]);
         setValue("");
@@ -48,7 +54,9 @@ const SearchBox = ({ delimiter = ",", onChange, ...props }: IProps = {}) => {
       const { value } = event.currentTarget;
       const nextValue = value.trim();
       if (
-        !addValue(value, (text) => (text ? text.endsWith(delimiter) : false))
+        !addValue({ value }, (text) =>
+          text ? text.endsWith(delimiter) : false
+        )
       ) {
         onChange?.(event);
         setValue(nextValue);
@@ -59,9 +67,8 @@ const SearchBox = ({ delimiter = ",", onChange, ...props }: IProps = {}) => {
   const handleKeyup = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       const { value } = event.currentTarget;
-      if (event.keyCode === 13 && value.length) {
-        console.log("pls add this");
-        addValue(value, () => true);
+      if (props.shouldBreakOnEnter && event.keyCode === 13 && value.length) {
+        addValue({ value }, () => true);
         return;
       }
       if (event.keyCode === 8 && !value.length) {
@@ -80,6 +87,19 @@ const SearchBox = ({ delimiter = ",", onChange, ...props }: IProps = {}) => {
     },
     [tags]
   );
+  const handleAddNewTag = React.useCallback(
+    (id: string, value: string) => {
+      addValue(
+        {
+          id,
+          value,
+        },
+        () => true
+      );
+      return true;
+    },
+    [addValue]
+  );
 
   const outputFactory = React.useCallback(() => {
     return {
@@ -89,9 +109,17 @@ const SearchBox = ({ delimiter = ",", onChange, ...props }: IProps = {}) => {
         value: value,
       }),
       onDelete: handleTagDelete,
+      addNewTag: handleAddNewTag,
       tags: tags,
     };
-  }, [handleKeyup, handleTagDelete, handleValueChange, tags, value]);
+  }, [
+    handleAddNewTag,
+    handleKeyup,
+    handleTagDelete,
+    handleValueChange,
+    tags,
+    value,
+  ]);
   const sameRef = React.useRef<UseTagInput>(outputFactory());
 
   Object.assign(sameRef.current, outputFactory());

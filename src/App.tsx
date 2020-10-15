@@ -8,10 +8,10 @@ function App() {
 
   return (
     <div className="flex flex-col bg-gray-200 justify-center h-screen items-center">
-      <div className="min-w-full p-12 ">
+      <div className="min-w-full p-12 flex-initial">
         <SearchBox />
       </div>
-      <div className="">
+      <div className="flex-auto">
         packages heres
         {packageState.state?.name}
       </div>
