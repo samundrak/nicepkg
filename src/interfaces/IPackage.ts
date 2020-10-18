@@ -1,27 +1,41 @@
 import { IDistTags } from "./IDistTags";
 import { IMaintainer } from "./IMaintainer";
 import { IRepository } from "./IRepository";
+import { IGithub } from "./IGithub";
 
 export interface IPackage {
-  _id: string;
-  _rev: string;
   name: string;
+  scope: "unscoped" | "scoped";
+  version: string;
   description: string;
-  "dist-tags": IDistTags;
-  versions: { [key: string]: any };
+  keywords: string[];
+  date: string;
+  publisher: {
+    username: string;
+    email: string;
+  };
   maintainers: IMaintainer[];
-  time: {
-    // will be in ISO
+  repository: IRepository;
+  links: {
+    npm: string;
+    homepage: string;
+    repository: string;
+    bugs: string;
+  };
+  license: string;
+  dependencies: {
     [key: string]: string;
   };
-  repository: IRepository;
-  readme: string;
-  readmeFilename: string;
-  homepage: string;
-  keywords: string[];
-  bugs: {
-    url: string;
+  releases: [];
+  hasSelectiveFiles: true;
+  npm: {
+    downloads: {
+      from: string;
+      to: string;
+      count: number;
+    }[];
+    dependentsCount: number;
+    starsCount: number;
   };
-  users: {};
-  license: string;
+  github: IGithub;
 }

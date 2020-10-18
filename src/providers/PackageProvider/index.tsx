@@ -1,12 +1,10 @@
 import React, { useReducer, Dispatch } from "react";
 import actions, { IPackageState, stateFactory } from "./actions";
 
-export const PackageContext = React.createContext<
-  Partial<{
-    state: IPackageState;
-    dispatch: React.DispatchWithoutAction;
-  }>
->({}!);
+export const PackageContext = React.createContext<{
+  state: IPackageState;
+  dispatch: ({}: any) => any;
+}>(null!);
 
 const PackageProvider: React.FC<{}> = ({ children }) => {
   const [state, dispatch] = useReducer(actions, stateFactory());

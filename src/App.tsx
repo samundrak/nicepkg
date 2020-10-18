@@ -1,19 +1,34 @@
 import React, { useContext } from "react";
 import "./css/app.css";
-import SearchBox from "./components/SearchBox";
+import SearchBox, { IMiniPackageInfo } from "./components/SearchBox";
 import { PackageContext } from "./providers/PackageProvider";
+import PackageBox from "./components/PackageBox";
+import { PACKAGE_INFO } from "./consts/api";
+import { IPackage } from "./interfaces/IPackage";
+import { addPackage } from "./providers/PackageProvider/action-creator";
 
 function App() {
   const packageState = useContext(PackageContext);
 
+  const handlePackageAddition = React.useCallback(
+    async (packageInfo: IMiniPackageInfo) => {
+      const data = (await fetch(
+        `${PACKAGE_INFO}${packageInfo.name}`
+      ).then((response) => response.json())) as { collected: IPackage };
+      packageState.dispatch?.(addPackage(data.collected));
+    },
+    []
+  );
   return (
-    <div className="flex flex-col bg-gray-200 justify-center h-screen items-center">
-      <div className="min-w-full p-12 flex-initial">
-        <SearchBox />
+    <div className="min-h-screen flex flex-col bg-gray-700 justify-start h-auto items-center">
+      <div className="min-w-full p-12 ">
+        <SearchBox onAdd={handlePackageAddition} />
       </div>
-      <div className="flex-auto">
-        packages heres
-        {packageState.state?.name}
+      <div className="min-w-full p-1 flex justify-center flex-wrap">
+        <PackageBox title="Downloads" />
+        <PackageBox title="Popularity" />
+        <PackageBox title="Size" />
+        <PackageBox title="Size" />
       </div>
     </div>
   );

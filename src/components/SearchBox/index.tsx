@@ -6,7 +6,15 @@ import { NPM_SEARCH } from "../../consts/api";
 import { fetcher } from "../../utils";
 import useKeyBoardEvents, { SpecialKeys } from "../../hooks/useKeyboard";
 
-const SearchBox = () => {
+export interface IMiniPackageInfo {
+  name: string;
+  version?: string;
+}
+interface IProps {
+  onAdd?: (packageInfo: IMiniPackageInfo) => void;
+}
+const SearchBox = (props: IProps) => {
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const [activeListIndex, setActiveListIndex] = React.useState(-1);
   const listRef = React.useRef<HTMLUListElement>(null);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -15,7 +23,9 @@ const SearchBox = () => {
     debouncedSearchTerm ? `${NPM_SEARCH}${debouncedSearchTerm}&size=5` : null,
     fetcher
   );
-
+  React.useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
   const handleInputChange = React.useCallback(
     (event: SyntheticEvent<HTMLInputElement>) => {
       setSearchTerm(event.currentTarget.value);
@@ -29,13 +39,17 @@ const SearchBox = () => {
   const handlePackageSelection = React.useCallback(
     (item) => {
       return () => {
-        console.log(item);
         //@ts-ignore
         tagInput.addNewTag(item.package.name, item.package.name);
         setSearchTerm("");
+        inputRef.current?.focus();
+        props.onAdd?.({
+          name: item.package.name,
+          version: item.package.version,
+        });
       };
     },
-    [tagInput]
+    [props.onAdd, tagInput]
   );
 
   const handleKeyFlow = React.useCallback(
@@ -103,8 +117,9 @@ const SearchBox = () => {
         </div>
         <div className="w-5/12 h-16">
           <input
+            ref={inputRef}
             className="
-            w-full
+            w-11/12
             h-16
           text-2xl
           text-center
@@ -117,7 +132,7 @@ const SearchBox = () => {
           />
           <ul
             ref={listRef}
-            className="absolute rounded-md mt-1 w-5/12 bg-white shadow-xl"
+            className="absolute rounded-md mt-1 w-5/12 bg-white shadow-xl z-50"
           >
             {(data?.results || []).map(
               (item: { package: Record<string, any> }, index: number) => (
