@@ -4,30 +4,36 @@ import { IRepository } from "./IRepository";
 import { IGithub } from "./IGithub";
 
 export interface IPackage {
-  name: string;
-  scope: "unscoped" | "scoped";
-  version: string;
-  description: string;
-  keywords: string[];
-  date: string;
-  publisher: {
-    username: string;
-    email: string;
+  metadata: {
+    name: string;
+    scope: "unscoped" | "scoped";
+    version: string;
+    description: string;
+    author: {
+      name: string;
+      email: string;
+    };
+    date: string;
+    keywords: string;
+    maintainers: IMaintainer[];
+    repository: IRepository;
+    links: {
+      npm: string;
+      homepage: string;
+      repository: string;
+      bugs: string;
+    };
+    license: string;
+    dependencies: {
+      [key: string]: string;
+    };
+    releases: [];
+    hasSelectiveFiles: true;
+    publisher: {
+      username: string;
+      email: string;
+    };
   };
-  maintainers: IMaintainer[];
-  repository: IRepository;
-  links: {
-    npm: string;
-    homepage: string;
-    repository: string;
-    bugs: string;
-  };
-  license: string;
-  dependencies: {
-    [key: string]: string;
-  };
-  releases: [];
-  hasSelectiveFiles: true;
   npm: {
     downloads: {
       from: string;

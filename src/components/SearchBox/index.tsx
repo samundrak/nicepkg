@@ -12,6 +12,7 @@ export interface IMiniPackageInfo {
 }
 interface IProps {
   onAdd?: (packageInfo: IMiniPackageInfo) => void;
+  onDelete?: (packageName: string) => void;
 }
 const SearchBox = (props: IProps) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -107,7 +108,10 @@ const SearchBox = (props: IProps) => {
             >
               <div className="p-2">{tag.value}</div>
               <div
-                onClick={() => tagInput.onDelete(tag.id)}
+                onClick={() => {
+                  props.onDelete?.(tag.id);
+                  tagInput.onDelete(tag.id);
+                }}
                 className="cursor-pointer p-2 ml-1 bg-gray-900"
               >
                 x
@@ -140,7 +144,7 @@ const SearchBox = (props: IProps) => {
                   key={index}
                   className={`text-md
                  p-2 mt-1 text-center leading-loose
-                 hover:bg-gray-100
+                 hover:bg-gray-200
                  cursor-pointer
                  text-gray-700
                  border-t-4
@@ -157,6 +161,12 @@ const SearchBox = (props: IProps) => {
                   <br />
                   <span className="text-gray-500 ml-2 text-sm">
                     {item.package.description}
+                  </span>
+                  <br />
+                  <span className="text-gray-600 ml-2 text-sm">
+                    {(item.package.maintainers || [])
+                      .map((item: { username: string }) => `@${item.username}`)
+                      .join(", ")}
                   </span>
                 </li>
               )

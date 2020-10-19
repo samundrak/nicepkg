@@ -5,7 +5,10 @@ import { PackageContext } from "./providers/PackageProvider";
 import PackageBox from "./components/PackageBox";
 import { PACKAGE_INFO } from "./consts/api";
 import { IPackage } from "./interfaces/IPackage";
-import { addPackage } from "./providers/PackageProvider/action-creator";
+import {
+  addPackage,
+  deletePackage,
+} from "./providers/PackageProvider/action-creator";
 
 function App() {
   const packageState = useContext(PackageContext);
@@ -17,16 +20,39 @@ function App() {
       ).then((response) => response.json())) as { collected: IPackage };
       packageState.dispatch?.(addPackage(data.collected));
     },
-    []
+    [packageState.dispatch]
   );
+
+  const handlePackageDeletion = React.useCallback(
+    (packageId: string) => {
+      packageState.dispatch?.(deletePackage(packageId));
+    },
+    [packageState.dispatch]
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-700 justify-start h-auto items-center">
       <div className="min-w-full p-12 ">
-        <SearchBox onAdd={handlePackageAddition} />
+        <SearchBox
+          onAdd={handlePackageAddition}
+          onDelete={handlePackageDeletion}
+        />
       </div>
       <div className="min-w-full p-1 flex justify-center flex-wrap">
         <PackageBox title="Downloads" />
-        <PackageBox title="Popularity" />
+        <PackageBox
+          title="Popularity"
+          value={packageState.state.packages.map((packageInfo) => ({
+            name: packageInfo.metadata.name,
+            stars: packageInfo.github.starsCount,
+          }))}
+          dataKeys={[
+            {
+              colorCode: "#8884d8",
+              key: "stars",
+            },
+          ]}
+        />
         <PackageBox title="Size" />
         <PackageBox title="Size" />
       </div>

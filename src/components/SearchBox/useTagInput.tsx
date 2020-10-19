@@ -71,13 +71,13 @@ const SearchBox = ({ delimiter = ",", onChange, ...props }: IProps = {}) => {
         addValue({ value }, () => true);
         return;
       }
-      if (event.keyCode === 8 && !value.length) {
-        // it is back key
-        const nextTags = [...tags];
-        nextTags.pop?.();
-        setTags(nextTags);
-        return;
-      }
+      // if (event.keyCode === 8 && !value.length) {
+      //   // it is back key
+      //   const nextTags = [...tags];
+      //   nextTags.pop?.();
+      //   setTags(nextTags);
+      //   return;
+      // }
     },
     [tags]
   );

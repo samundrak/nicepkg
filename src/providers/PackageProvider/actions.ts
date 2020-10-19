@@ -1,6 +1,6 @@
 import produce from "immer";
 import { IPackage } from "../../interfaces/IPackage";
-import { ADD_NEW_PACKAGE } from "./action-creator";
+import { ADD_NEW_PACKAGE, DELETE_PACKAGE } from "./action-creator";
 
 export interface IPackageState {
   packages: IPackage[];
@@ -22,7 +22,14 @@ export default function (
   return produce(state, (draft) => {
     switch (action?.type) {
       case ADD_NEW_PACKAGE:
-        state.packages.push(action.payload as IPackage);
+        draft.packages.push(action.payload as IPackage);
+        break;
+      case DELETE_PACKAGE:
+        const packageIndex = draft.packages.findIndex(
+          (item) => item.metadata.name === action.payload.id
+        );
+        draft.packages.splice(packageIndex, 1);
+        break;
     }
     return draft;
   });
