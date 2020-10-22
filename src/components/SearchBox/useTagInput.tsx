@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, Children } from "react";
+import React, { SyntheticEvent } from "react";
 import Tag from "./Tag";
 
 interface Tag {
@@ -79,7 +79,7 @@ const SearchBox = ({ delimiter = ",", onChange, ...props }: IProps = {}) => {
       //   return;
       // }
     },
-    [tags]
+    [addValue, props.shouldBreakOnEnter]
   );
   const handleTagDelete = React.useCallback(
     (tagId: string) => {

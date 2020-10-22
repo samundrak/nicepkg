@@ -22,7 +22,10 @@ export interface IGithub {
     };
     isDisabled: boolean;
   };
-  contributors: [];
+  contributors: {
+    username: string;
+    commitsCount: string;
+  }[];
   commits: {
     from: string;
     to: string;

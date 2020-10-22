@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import "./css/app.css";
 import SearchBox, { IMiniPackageInfo } from "./components/SearchBox";
 import { PackageContext } from "./providers/PackageProvider";
-import PackageBox from "./components/PackageBox";
+import PackageBox, { Charts } from "./components/PackageBox";
 import { PACKAGE_INFO } from "./consts/api";
 import { IPackage } from "./interfaces/IPackage";
 import {
@@ -38,23 +38,68 @@ function App() {
           onDelete={handlePackageDeletion}
         />
       </div>
-      <div className="min-w-full p-1 flex justify-center flex-wrap">
-        <PackageBox title="Downloads" />
+      <div className="min-w-full p-1 flex flex-wrap items-center justify-center">
         <PackageBox
-          title="Popularity"
-          value={packageState.state.packages.map((packageInfo) => ({
-            name: packageInfo.metadata.name,
-            stars: packageInfo.github.starsCount,
+          title="Downloads"
+          chart={Charts.BAR_CHART}
+          value={packageState.state.packages.map((item) => ({
+            name: item.metadata.name,
+            downloads: item.npm.downloads[item.npm.downloads.length - 1].count,
           }))}
           dataKeys={[
             {
-              colorCode: "#8884d8",
+              colorCode: "#003c46",
+              key: "downloads",
+            },
+          ]}
+        />
+        <PackageBox
+          chart={Charts.BAR_CHART}
+          title="Popularity"
+          value={packageState.state.packages.map((packageInfo) => ({
+            name: packageInfo.metadata.name,
+            stars: packageInfo.github?.starsCount || 0,
+          }))}
+          dataKeys={[
+            {
+              colorCode: "#13719b",
               key: "stars",
             },
           ]}
         />
-        <PackageBox title="Size" />
-        <PackageBox title="Size" />
+        <PackageBox
+          chart={Charts.LINE_CHART}
+          title="Issues (Open)"
+          value={packageState.state.packages.map((packageInfo) => ({
+            name: packageInfo.metadata.name,
+            openIssues: packageInfo.github?.issues?.openCount + "" || 0,
+            totalIssues: packageInfo.github?.issues?.count + "" || 0,
+          }))}
+          dataKeys={[
+            {
+              colorCode: "#003c46",
+              key: "openIssues",
+            },
+            {
+              colorCode: "#3994e0",
+              key: "totalIssues",
+            },
+          ]}
+        />
+        <PackageBox
+          chart={Charts.BAR_CHART}
+          title="Contributors"
+          value={packageState.state.packages.map((packageInfo) => ({
+            name: packageInfo.metadata.name,
+            contributors: packageInfo.github?.contributors?.length || 0,
+          }))}
+          dataKeys={[
+            {
+              colorCode: "#3994e0",
+              key: "contributors",
+            },
+          ]}
+        />
       </div>
     </div>
   );

@@ -1,21 +1,18 @@
 import React from "react";
-import {
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  Bar,
-  ResponsiveContainer,
-} from "recharts";
+import PackageLineChart from "./PackageLineChart";
+import PackageBarChart from "./PackageBarChart";
 
+export enum Charts {
+  LINE_CHART,
+  BAR_CHART,
+}
 interface IProps {
   title: string;
   value?: {
     [key: string]: string | number;
   }[];
   dataKeys?: { key: string; colorCode: string }[];
+  chart: Charts;
 }
 const PackageBox = (props: IProps) => {
   const [data, setData] = React.useState<
@@ -24,7 +21,6 @@ const PackageBox = (props: IProps) => {
     }[]
   >([]);
   React.useEffect(() => {
-    console.log(props.value);
     setData(props.value || []);
   }, [props.value]);
 
@@ -37,19 +33,12 @@ const PackageBox = (props: IProps) => {
         className="bg-gray-300 h-auto p-5 rounded-b-md 
       text-center border-gray-900 border-solid border-8"
       >
-        <ResponsiveContainer width={"99%"} height={250}>
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            {/* <Bar dataKey="pv" fill="#8884d8" /> */}
-            {(props.dataKeys || []).map((item) => (
-              <Bar dataKey={item.key} fill={item.colorCode} />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
+        {props.chart === Charts.BAR_CHART ? (
+          <PackageBarChart data={data} dataKeys={props.dataKeys || []} />
+        ) : null}
+        {props.chart === Charts.LINE_CHART ? (
+          <PackageLineChart data={data} dataKeys={props.dataKeys || []} />
+        ) : null}
       </div>
     </div>
   );

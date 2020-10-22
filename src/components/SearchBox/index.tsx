@@ -40,6 +40,13 @@ const SearchBox = (props: IProps) => {
   const handlePackageSelection = React.useCallback(
     (item) => {
       return () => {
+        const ifPackageExist = tagInput.tags.find(
+          (tag) => tag.id === item.package.name
+        );
+        if (ifPackageExist) {
+          alert("Package already added.");
+          return;
+        }
         //@ts-ignore
         tagInput.addNewTag(item.package.name, item.package.name);
         setSearchTerm("");
