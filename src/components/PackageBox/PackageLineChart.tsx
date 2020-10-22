@@ -29,16 +29,23 @@ const PackageLineChart: React.FC<IProps> = (props) => {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis tickFormatter={(value) => millify(value)} />
+        <YAxis
+          tickFormatter={(value) => {
+            if (!isFinite(value)) return 0;
+            return millify(value);
+          }}
+        />
         <Tooltip
           //@ts-ignore
           formatter={(value: number, name: string) => {
+            if (!isFinite(value)) return 0;
             return millify(value);
           }}
         />
         <Legend wrapperStyle={{ color: "gray" }} />
         {(props.dataKeys || []).map((item) => (
           <Line
+            key={item.key}
             type="monotone"
             dataKey={item.key}
             stroke={item.colorCode}

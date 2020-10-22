@@ -26,16 +26,23 @@ const PackageBarChart: React.FC<IProps> = (props) => {
       <BarChart data={props.data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis tickFormatter={(value) => millify(value)} />
+        <YAxis
+          tickFormatter={(value) => {
+            if (!isFinite(value)) return 0;
+            return millify(value);
+          }}
+        />
         <Tooltip
           //@ts-ignore
           formatter={(value: number, name: string) => {
+            if (!isFinite(value)) return 0;
             return millify(value);
           }}
         />
         <Legend wrapperStyle={{ color: "gray" }} />
         {(props.dataKeys || []).map((item) => (
           <Bar
+            key={item.key}
             name={startCase(item.key)}
             dataKey={item.key}
             fill={item.colorCode}

@@ -39,22 +39,26 @@ const SearchBox = (props: IProps) => {
   });
   const handlePackageSelection = React.useCallback(
     (item) => {
-      return () => {
-        const ifPackageExist = tagInput.tags.find(
-          (tag) => tag.id === item.package.name
-        );
-        if (ifPackageExist) {
-          alert("Package already added.");
-          return;
+      return async () => {
+        try {
+          const ifPackageExist = tagInput.tags.find(
+            (tag) => tag.id === item.package.name
+          );
+          if (ifPackageExist) {
+            alert("Package already added.");
+            return;
+          }
+          //@ts-ignore
+          tagInput.addNewTag(item.package.name, item.package.name);
+          setSearchTerm("");
+          inputRef.current?.focus();
+          await props.onAdd?.({
+            name: item.package.name,
+            version: item.package.version,
+          });
+        } catch {
+          tagInput.onDelete(item.package.name);
         }
-        //@ts-ignore
-        tagInput.addNewTag(item.package.name, item.package.name);
-        setSearchTerm("");
-        inputRef.current?.focus();
-        props.onAdd?.({
-          name: item.package.name,
-          version: item.package.version,
-        });
       };
     },
     [props.onAdd, tagInput]

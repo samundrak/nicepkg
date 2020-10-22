@@ -17,7 +17,14 @@ function App() {
     async (packageInfo: IMiniPackageInfo) => {
       const data = (await fetch(
         `${PACKAGE_INFO}${packageInfo.name}`
-      ).then((response) => response.json())) as { collected: IPackage };
+      ).then((response) => response.json())) as {
+        code?: string;
+        collected: IPackage;
+      };
+      if (data.code === "NOT_FOUND") {
+        alert("Unable to get package information.");
+        throw new Error("Unable to find");
+      }
       packageState.dispatch?.(addPackage(data.collected));
     },
     [packageState.dispatch]
