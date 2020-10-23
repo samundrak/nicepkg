@@ -130,24 +130,44 @@ const SearchBox = (props: IProps) => {
             </div>
           ))}
         </div>
-        <div className="w-5/12 h-16">
-          <input
-            ref={inputRef}
-            className="
-            w-11/12
+        <div className="sm:w-2/6 md:w-5/12 h-16">
+          <div className="flex flex-row-reverse">
+            <input
+              ref={inputRef}
+              className="
+            p-6
+            w-full
             h-16
           text-2xl
           text-center
           font-thin
-          focus:outline-none focus:shadow-outline mt-2 rounded-full border-solid  p-4"
-            placeholder="Enter package name..."
-            type="text"
-            {...tagInput.getInputProps()}
-            value={searchTerm}
-          />
+          focus:outline-none focus:shadow-outline mt-2 rounded-lg border-solid"
+              placeholder="Enter package name to compare..."
+              type="text"
+              {...tagInput.getInputProps()}
+              value={searchTerm}
+            />
+            <div className="absolute">
+              <svg
+                className="sm:w-10 w-5 h-16 mt-2  text-gray-700 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </div>
+          </div>
+
           <ul
             ref={listRef}
-            className="absolute rounded-md mt-1 w-5/12 bg-white shadow-xl z-50"
+            className="absolute rounded-md mt-1 sm:12/12 md:w-5/12 bg-white shadow-xl z-50"
           >
             {(data?.results || []).map(
               (item: { package: Record<string, any> }, index: number) => (
