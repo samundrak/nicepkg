@@ -12,12 +12,15 @@ import {
 import { ReactComponent as ILEmpty } from "./assets/svg/il-empty.svg";
 import UploadPackage from "./components/UploadPackage";
 import { IDependency } from "./interfaces/IDependency";
+import Loading from "./components/Loading";
 
 function App() {
+  const [isLoading, setIsLoading] = React.useState(false);
   const packageState = useContext(PackageContext);
 
   const handlePackageAddition = React.useCallback(
     async (packageInfo: IMiniPackageInfo) => {
+      setIsLoading(true);
       const data = await getPackageInformation([packageInfo.name]);
       if (
         data[packageInfo.name].code === "NOT_FOUND" ||
@@ -26,6 +29,7 @@ function App() {
         alert("Unable to get package information.");
         throw new Error("Unable to find");
       }
+      setIsLoading(false);
       packageState.dispatch?.(addPackage(data[packageInfo.name].collected));
     },
     [packageState.dispatch]
@@ -39,10 +43,12 @@ function App() {
   );
   const handleOnPackageJsonScan = React.useCallback(
     async (dependencis: IDependency[]) => {
+      setIsLoading(true);
       const data = await getPackageInformation(Object.keys(dependencis));
       packageState.dispatch?.(
         addPackages(Object.values(data).map((item) => item.collected))
       );
+      setIsLoading(false);
     },
     [packageState.dispatch]
   );
@@ -63,6 +69,7 @@ function App() {
           alt="Nice Package logo"
         />
       </div>
+      <Loading isSpinning={isLoading} />
       <div className="heroBG min-h-screen flex flex-col bg-gray-700 justify-center items-center">
         <div className="min-w-full p-6 ">
           <SearchBox
