@@ -3,31 +3,30 @@ import "./css/app.css";
 import SearchBox, { IMiniPackageInfo } from "./components/SearchBox";
 import { PackageContext } from "./providers/PackageProvider";
 import PackageBox, { Charts } from "./components/PackageBox";
-import { PACKAGE_INFO } from "./consts/api";
-import { IPackage } from "./interfaces/IPackage";
+import { getPackageInformation } from "./consts/api";
 import {
   addPackage,
   deletePackage,
+  addPackages,
 } from "./providers/PackageProvider/action-creator";
 import { ReactComponent as ILEmpty } from "./assets/svg/il-empty.svg";
 import UploadPackage from "./components/UploadPackage";
+import { IDependency } from "./interfaces/IDependency";
 
 function App() {
   const packageState = useContext(PackageContext);
 
   const handlePackageAddition = React.useCallback(
     async (packageInfo: IMiniPackageInfo) => {
-      const data = (await fetch(
-        `${PACKAGE_INFO}${packageInfo.name}`
-      ).then((response) => response.json())) as {
-        code?: string;
-        collected: IPackage;
-      };
-      if (data.code === "NOT_FOUND") {
+      const data = await getPackageInformation([packageInfo.name]);
+      if (
+        data[packageInfo.name].code === "NOT_FOUND" ||
+        data[packageInfo.name].code === "INTERNAL"
+      ) {
         alert("Unable to get package information.");
         throw new Error("Unable to find");
       }
-      packageState.dispatch?.(addPackage(data.collected));
+      packageState.dispatch?.(addPackage(data[packageInfo.name].collected));
     },
     [packageState.dispatch]
   );
@@ -35,6 +34,15 @@ function App() {
   const handlePackageDeletion = React.useCallback(
     (packageId: string) => {
       packageState.dispatch?.(deletePackage(packageId));
+    },
+    [packageState.dispatch]
+  );
+  const handleOnPackageJsonScan = React.useCallback(
+    async (dependencis: IDependency[]) => {
+      const data = await getPackageInformation(Object.keys(dependencis));
+      packageState.dispatch?.(
+        addPackages(Object.values(data).map((item) => item.collected))
+      );
     },
     [packageState.dispatch]
   );
@@ -55,26 +63,28 @@ function App() {
           alt="Nice Package logo"
         />
       </div>
-      <div className="heroBG min-h-screen flex flex-col bg-gray-700 justify-center h-auto items-center">
-        <div className="min-w-full p-12 ">
+      <div className="heroBG min-h-screen flex flex-col bg-gray-700 justify-center items-center">
+        <div className="min-w-full p-6 ">
           <SearchBox
             onAdd={handlePackageAddition}
             onDelete={handlePackageDeletion}
+            packages={packageState.state.packages}
           />
-          <UploadPackage />
         </div>
+        <UploadPackage onScan={handleOnPackageJsonScan} />
         <div className="min-w-full p-1 flex flex-wrap items-center justify-center">
           {!packageState.state.packages.length ? (
-            <ILEmpty className="w-6/12 h-auto" />
+            <ILEmpty className="w-6/12 h-auto opacity-75 rounded-full" />
           ) : (
+            //
             <React.Fragment>
               <PackageBox
                 title="Downloads"
                 chart={Charts.BAR_CHART}
                 value={packageState.state.packages.map((item) => ({
-                  name: item.metadata.name,
+                  name: item?.metadata?.name,
                   downloads:
-                    item.npm.downloads[item.npm.downloads.length - 1].count,
+                    item?.npm.downloads[item.npm.downloads.length - 1].count,
                 }))}
                 dataKeys={[
                   {
@@ -87,8 +97,8 @@ function App() {
                 chart={Charts.BAR_CHART}
                 title="Popularity"
                 value={packageState.state.packages.map((packageInfo) => ({
-                  name: packageInfo.metadata.name,
-                  stars: packageInfo.github?.starsCount || 0,
+                  name: packageInfo?.metadata.name,
+                  stars: packageInfo?.github?.starsCount || 0,
                 }))}
                 dataKeys={[
                   {
@@ -101,9 +111,9 @@ function App() {
                 chart={Charts.LINE_CHART}
                 title="Issues (Open)"
                 value={packageState.state.packages.map((packageInfo) => ({
-                  name: packageInfo.metadata.name,
-                  openIssues: packageInfo.github?.issues?.openCount + "" || 0,
-                  totalIssues: packageInfo.github?.issues?.count + "" || 0,
+                  name: packageInfo?.metadata.name,
+                  openIssues: packageInfo?.github?.issues?.openCount + "" || 0,
+                  totalIssues: packageInfo?.github?.issues?.count + "" || 0,
                 }))}
                 dataKeys={[
                   {
@@ -120,8 +130,8 @@ function App() {
                 chart={Charts.BAR_CHART}
                 title="Contributors"
                 value={packageState.state.packages.map((packageInfo) => ({
-                  name: packageInfo.metadata.name,
-                  contributors: packageInfo.github?.contributors?.length || 0,
+                  name: packageInfo?.metadata.name,
+                  contributors: packageInfo?.github?.contributors?.length || 0,
                 }))}
                 dataKeys={[
                   {

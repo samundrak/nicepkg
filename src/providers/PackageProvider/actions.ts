@@ -1,6 +1,10 @@
 import produce from "immer";
 import { IPackage } from "../../interfaces/IPackage";
-import { ADD_NEW_PACKAGE, DELETE_PACKAGE } from "./action-creator";
+import {
+  ADD_NEW_PACKAGE,
+  DELETE_PACKAGE,
+  ADD_NEW_PACKAGES,
+} from "./action-creator";
 
 export interface IPackageState {
   packages: IPackage[];
@@ -21,6 +25,9 @@ export default function (
 ): IPackageState {
   return produce(state, (draft) => {
     switch (action?.type) {
+      case ADD_NEW_PACKAGES:
+        draft.packages = action.payload as IPackage[];
+        break;
       case ADD_NEW_PACKAGE:
         draft.packages.push(action.payload as IPackage);
         break;

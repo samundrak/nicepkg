@@ -5,6 +5,7 @@ import useTagInput from "./useTagInput";
 import { NPM_SEARCH } from "../../consts/api";
 import { fetcher } from "../../utils";
 import useKeyBoardEvents, { SpecialKeys } from "../../hooks/useKeyboard";
+import { IPackage } from "../../interfaces/IPackage";
 
 export interface IMiniPackageInfo {
   name: string;
@@ -13,6 +14,7 @@ export interface IMiniPackageInfo {
 interface IProps {
   onAdd?: (packageInfo: IMiniPackageInfo) => void;
   onDelete?: (packageName: string) => void;
+  packages: IPackage[];
 }
 const SearchBox = (props: IProps) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -106,24 +108,31 @@ const SearchBox = (props: IProps) => {
     items-center
       "
       >
-        <div className="flex flex-row">
-          {tagInput.tags.map((tag) => (
+        <div className="flex flex-row w-8/12 flex-wrap">
+          {props.packages.map((packageInfo) => (
             <div
-              key={tag.id}
+              key={packageInfo.metadata.name}
               className="
-          bg-gray-800 rounded-full mr-1
+              bg-gray-900
+         rounded-full
           text-gray-400
           flex flex-row
           overflow-hidden
+          m-1
           "
             >
-              <div className="p-2">{tag.value}</div>
+              <div className="p-2">
+                {packageInfo.metadata.name}@
+                <span className="text-gray-500 text-sm">
+                  {packageInfo.metadata.version}
+                </span>
+              </div>
               <div
                 onClick={() => {
-                  props.onDelete?.(tag.id);
-                  tagInput.onDelete(tag.id);
+                  props.onDelete?.(packageInfo.metadata.name);
+                  tagInput.onDelete(packageInfo.metadata.name);
                 }}
-                className="cursor-pointer p-2 ml-1 bg-gray-900"
+                className="cursor-pointer p-2 ml-1  bg-gray-900 "
               >
                 x
               </div>

@@ -34,9 +34,18 @@ const PackageBarChart: React.FC<IProps> = (props) => {
         />
         <Tooltip
           //@ts-ignore
-          formatter={(value: number, name: string) => {
+          formatter={(
+            value: number,
+            name: string,
+            options: {
+              payload: {
+                name: string;
+              };
+            }
+          ) => {
             if (!isFinite(value)) return 0;
-            return millify(value);
+
+            return ` ${millify(value)} (${options.payload.name})`;
           }}
         />
         <Legend wrapperStyle={{ color: "gray" }} />
