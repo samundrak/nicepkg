@@ -16,7 +16,7 @@ const UploadPackage: React.FC<IProps> = (props) => {
           //@ts-ignore
           .then((response) => response.json())
           .then((packagejson: { dependencies: IDependency[] }) => {
-            props.onScan(packagejson.dependencies);
+            props.onScan(packagejson.dependencies || []);
           })
           .catch((err: Error) => alert(err.message));
       };

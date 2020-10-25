@@ -13,8 +13,10 @@ import { ReactComponent as ILEmpty } from "./assets/svg/il-empty.svg";
 import UploadPackage from "./components/UploadPackage";
 import { IDependency } from "./interfaces/IDependency";
 import Loading from "./components/Loading";
+import Table from "./components/Table";
 
 function App() {
+  const contentRef = React.useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const packageState = useContext(PackageContext);
 
@@ -49,6 +51,10 @@ function App() {
         addPackages(Object.values(data).map((item) => item.collected))
       );
       setIsLoading(false);
+      contentRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
     },
     [packageState.dispatch]
   );
@@ -71,7 +77,7 @@ function App() {
       </div>
       <Loading isSpinning={isLoading} />
       <div className="heroBG min-h-screen flex flex-col bg-gray-700 justify-center items-center">
-        <div className="min-w-full p-6 ">
+        <div className="min-w-full p-6">
           <SearchBox
             onAdd={handlePackageAddition}
             onDelete={handlePackageDeletion}
@@ -79,19 +85,20 @@ function App() {
           />
         </div>
         <UploadPackage onScan={handleOnPackageJsonScan} />
-        <div className="min-w-full p-1 flex flex-wrap items-center justify-center">
+        <div
+          ref={contentRef}
+          className="min-w-full p-1 flex flex-wrap items-center justify-center"
+        >
           {!packageState.state.packages.length ? (
             <ILEmpty className="w-6/12 h-auto opacity-75 rounded-full" />
           ) : (
-            //
             <React.Fragment>
               <PackageBox
-                title="Downloads"
+                title="Downloads (Weekly)"
                 chart={Charts.BAR_CHART}
                 value={packageState.state.packages.map((item) => ({
                   name: item?.metadata?.name,
-                  downloads:
-                    item?.npm.downloads[item.npm.downloads.length - 1].count,
+                  downloads: item?.npm.downloads[1].count,
                 }))}
                 dataKeys={[
                   {
@@ -147,6 +154,15 @@ function App() {
                   },
                 ]}
               />
+              {/* <Table
+                data={packageState.state.packages.map((packageInfo) => ({
+                  contributions: packageInfo?.github?.contributors?.length,
+                  downloads: packageInfo?.npm.downloads[1].count,
+                  issues: packageInfo?.github?.issues?.openCount + "",
+                  stars: packageInfo?.github?.starsCount,
+                  name: packageInfo.metadata.name,
+                }))}
+              /> */}
             </React.Fragment>
           )}
         </div>
