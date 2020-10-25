@@ -60,7 +60,7 @@ const SearchBox = (props: IProps) => {
             version: item.package.version,
           });
         } catch {
-          tagInput.onDelete(item.package.name);
+          tagInput?.onDelete(item.package.name);
         }
       };
     },
