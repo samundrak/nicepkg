@@ -1,6 +1,7 @@
 import React, { SyntheticEvent } from "react";
 import useSWR from "swr";
 import { useDebounce } from "use-debounce";
+import {ReactComponent as IconCross} from  '../../assets/svg/ic-cross.svg';
 import useTagInput from "./useTagInput";
 import { NPM_SEARCH } from "../../consts/api";
 import { fetcher } from "../../utils";
@@ -59,7 +60,7 @@ const SearchBox = (props: IProps) => {
             version: item.package.version,
           });
         } catch {
-          tagInput.onDelete(item.package.name);
+          tagInput?.onDelete(item.package.name);
         }
       };
     },
@@ -106,39 +107,10 @@ const SearchBox = (props: IProps) => {
       flex flex-col
     justify-center
     items-center
+    mt-16
       "
       >
-        <div className="flex flex-row w-8/12 flex-wrap h-64 overflow-hidden overflow-y-scroll">
-          {props.packages.map((packageInfo) => (
-            <div
-              key={packageInfo.metadata.name}
-              className="
-              bg-gray-900
-         rounded-full
-          text-gray-400
-          flex flex-row
-          overflow-hidden
-          m-1
-          "
-            >
-              <div className="p-2">
-                {packageInfo.metadata.name}@
-                <span className="text-gray-500 text-sm">
-                  {packageInfo.metadata.version}
-                </span>
-              </div>
-              <div
-                onClick={() => {
-                  props.onDelete?.(packageInfo.metadata.name);
-                  tagInput.onDelete(packageInfo.metadata.name);
-                }}
-                className="cursor-pointer p-2 ml-1  bg-gray-900 "
-              >
-                x
-              </div>
-            </div>
-          ))}
-        </div>
+
         <div className="sm:w-2/6 md:w-5/12 h-16">
           <div className="flex flex-row-reverse">
             <input
@@ -212,6 +184,41 @@ const SearchBox = (props: IProps) => {
               )
             )}
           </ul>
+        </div>
+        <div className="flex flex-row w-8/12 flex-wrap  overflow-hidden overflow-y-auto  mt-10">
+          {props.packages.map((packageInfo) => (
+              <div
+                  key={packageInfo.metadata.name}
+                  className="
+              bg-gray-900
+         rounded-full
+          text-gray-400
+          flex flex-row
+          overflow-hidden
+          mr-1
+          px-4
+          py-2
+          flex
+          items-center
+          "
+              >
+                <div>
+                  {packageInfo.metadata.name}@
+                  <span className="text-gray-500 text-sm">
+                  {packageInfo.metadata.version}
+                </span>
+                </div>
+                <div
+                    onClick={() => {
+                      props.onDelete?.(packageInfo.metadata.name);
+                      tagInput.onDelete(packageInfo.metadata.name);
+                    }}
+                    className="cursor-pointer  ml-3 text-white text-2xl w-3 h-3"
+                >
+                  <IconCross/>
+                </div>
+              </div>
+          ))}
         </div>
       </div>
     </React.Fragment>
