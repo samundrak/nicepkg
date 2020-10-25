@@ -106,9 +106,10 @@ const SearchBox = (props: IProps) => {
       flex flex-col
     justify-center
     items-center
+    mt-16
       "
       >
-        <div className="flex flex-row w-8/12 flex-wrap h-64 overflow-hidden overflow-y-scroll">
+        <div className="flex flex-row w-8/12 flex-wrap  overflow-hidden overflow-y-auto mb-2">
           {props.packages.map((packageInfo) => (
             <div
               key={packageInfo.metadata.name}
