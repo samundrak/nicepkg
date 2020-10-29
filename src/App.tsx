@@ -63,7 +63,8 @@ function App() {
     <>
       <div
         className="
-          absolute bg-white"
+          absolute bg-white m-6"
+
       >
         <img
           src="./logo.png"
