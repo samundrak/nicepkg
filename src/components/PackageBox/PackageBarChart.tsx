@@ -1,5 +1,4 @@
 import React from "react";
-import millify from "millify";
 import {
   BarChart,
   CartesianGrid,
@@ -12,6 +11,7 @@ import {
 } from "recharts";
 //@ts-ignore
 import startCase from "lodash.startcase";
+import { convertToHumanReadableNumbers } from "../../utils";
 
 interface IProps {
   data: {}[];
@@ -26,12 +26,7 @@ const PackageBarChart: React.FC<IProps> = (props) => {
       <BarChart data={props.data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis
-          tickFormatter={(value) => {
-            if (!isFinite(value)) return 0;
-            return millify(value);
-          }}
-        />
+        <YAxis tickFormatter={convertToHumanReadableNumbers} />
         <Tooltip
           //@ts-ignore
           formatter={(
@@ -43,9 +38,9 @@ const PackageBarChart: React.FC<IProps> = (props) => {
               };
             }
           ) => {
-            if (!isFinite(value)) return 0;
-
-            return ` ${millify(value)} (${options.payload.name})`;
+            return ` ${convertToHumanReadableNumbers(value)} (${
+              options.payload.name
+            })`;
           }}
         />
         <Legend wrapperStyle={{ color: "gray" }} />

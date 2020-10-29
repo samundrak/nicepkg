@@ -1,5 +1,4 @@
 import React from "react";
-import millify from "millify";
 //@ts-ignore
 import startCase from "lodash.startcase";
 import {
@@ -12,6 +11,7 @@ import {
   Line,
   ResponsiveContainer,
 } from "recharts";
+import { convertToHumanReadableNumbers } from "../../utils";
 
 interface IProps {
   data: {}[];
@@ -29,12 +29,7 @@ const PackageLineChart: React.FC<IProps> = (props) => {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis
-          tickFormatter={(value) => {
-            if (!isFinite(value)) return 0;
-            return millify(value);
-          }}
-        />
+        <YAxis tickFormatter={convertToHumanReadableNumbers} />
         <Tooltip
           //@ts-ignore
           formatter={(
@@ -46,9 +41,9 @@ const PackageLineChart: React.FC<IProps> = (props) => {
               };
             }
           ) => {
-            if (!isFinite(value)) return 0;
-
-            return ` ${millify(value)} (${options.payload.name})`;
+            return ` ${convertToHumanReadableNumbers(value)} (${
+              options.payload.name
+            })`;
           }}
         />
         <Legend wrapperStyle={{ color: "gray" }} />

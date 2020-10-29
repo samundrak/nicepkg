@@ -1,27 +1,51 @@
 import React from "react";
 import DataTable from "react-data-table-component";
 import columns from "./columns";
-
-const data = [{ id: 1, title: "Conan the Barbarian", year: "1982" }];
+import { ITableData } from "../../interfaces/ITableData";
 
 interface IProps {
-  data?: {
-    downloads: number;
-    contributions: number;
-    issues: string;
-    stars: number;
-  }[];
+  data?: ITableData[];
 }
 const Table: React.FC<IProps> = (props) => {
   return (
-    <div>
-      <DataTable
-        title="More about packages"
-        style={{ width: "60vw" }}
-        columns={columns}
-        data={props.data || []}
-      />
-    </div>
+    <DataTable
+      striped
+      highlightOnHover
+      noHeader
+      fixedHeader
+      columns={columns}
+      data={props.data || []}
+      customStyles={{
+        headCells: {
+          style: {
+            color: "white",
+            background: "#1d232f",
+          },
+          activeSortStyle: {
+            color: "white",
+          },
+          inactiveSortStyle: {
+            color: "white",
+          },
+        },
+        headRow: {
+          style: {
+            background: "#1a202c",
+            color: "white",
+          },
+        },
+        rows: {
+          stripedStyle: {
+            background: "#292f3c",
+            color: "white",
+          },
+          style: {
+            background: "#1a202c",
+            color: "white",
+          },
+        },
+      }}
+    />
   );
 };
 export default Table;

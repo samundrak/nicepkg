@@ -13,7 +13,7 @@ import { ReactComponent as ILEmpty } from "./assets/svg/il-empty.svg";
 import UploadPackage from "./components/UploadPackage";
 import { IDependency } from "./interfaces/IDependency";
 import Loading from "./components/Loading";
-// import Table from "./components/Table";
+import Table from "./components/Table";
 
 function App() {
   const contentRef = React.useRef<HTMLDivElement>(null);
@@ -64,7 +64,6 @@ function App() {
       <div
         className="
           absolute bg-white m-6"
-
       >
         <img
           src="./logo.png"
@@ -94,6 +93,22 @@ function App() {
             <ILEmpty className="w-6/12 h-auto opacity-75 rounded-full" />
           ) : (
             <React.Fragment>
+              <div
+                className="p-2 w-4/6  overflow-hidden"
+                style={{ maxHeight: "500px" }}
+              >
+                <Table
+                  data={packageState.state.packages.map((packageInfo) => ({
+                    contributions: packageInfo?.github?.contributors?.length,
+                    downloads: packageInfo?.npm.downloads[1].count || 0,
+                    issuesOpen: packageInfo?.github?.issues
+                      ?.openCount as number,
+                    issues: packageInfo?.github?.issues?.count || 0,
+                    stars: packageInfo?.github?.starsCount || 0,
+                    name: packageInfo.metadata.name,
+                  }))}
+                />
+              </div>
               <PackageBox
                 title="Downloads (Weekly)"
                 chart={Charts.BAR_CHART}
@@ -155,15 +170,6 @@ function App() {
                   },
                 ]}
               />
-              {/* <Table
-                data={packageState.state.packages.map((packageInfo) => ({
-                  contributions: packageInfo?.github?.contributors?.length,
-                  downloads: packageInfo?.npm.downloads[1].count,
-                  issues: packageInfo?.github?.issues?.openCount + "",
-                  stars: packageInfo?.github?.starsCount,
-                  name: packageInfo.metadata.name,
-                }))}
-              /> */}
             </React.Fragment>
           )}
         </div>
