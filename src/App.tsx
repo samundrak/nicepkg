@@ -13,7 +13,7 @@ import { ReactComponent as ILEmpty } from "./assets/svg/il-empty.svg";
 import UploadPackage from "./components/UploadPackage";
 import { IDependency } from "./interfaces/IDependency";
 import Loading from "./components/Loading";
-import Table from "./components/Table";
+// import Table from "./components/Table";
 
 function App() {
   const contentRef = React.useRef<HTMLDivElement>(null);
