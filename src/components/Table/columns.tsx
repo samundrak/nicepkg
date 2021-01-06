@@ -9,10 +9,12 @@ export default [
     sortable: true,
     cell: (row: ITableData) => (
       // eslint-disable-next-line react/jsx-no-target-blank
-      <a target="_blank" href={`https://www.npmjs.com/package/${row.name}`}>
-        {" "}
-        {row.name}
-      </a>
+      <>
+        henlo
+        <a target="_blank" href={`https://www.npmjs.com/package/${row.name}`}>
+          {row.name}
+        </a>
+      </>
     ),
   },
   {
