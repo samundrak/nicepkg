@@ -25,7 +25,7 @@ export default [
   },
 
   {
-    name: "Contributions",
+    name: "Contributors",
     selector: "contributions",
     cell: (row: ITableData) => convertToHumanReadableNumbers(row.contributions),
     sortable: true,
